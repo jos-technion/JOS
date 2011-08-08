@@ -1,0 +1,46 @@
+// Ping-pong a counter between two processes.
+// Only need to start one of these -- splits into two, crudely.
+
+#include <inc/string.h>
+#include <inc/lib.h>
+
+envid_t dumbfork(void);
+
+void
+umain(void)
+{
+	envid_t id,id2;
+	int i;
+
+	//fork a child
+	id = fork();
+	if(id < 0 )
+		panic("shit!");
+	if(id==0) { // child code
+		for(i=0; i < 100; i ++)
+			cprintf("I should run first!\n");
+		return;
+		
+	} else { //parent code
+		sys_set_prio(id,100);
+	
+	}
+	id2 = fork();
+	if(id2 < 0 )
+		panic("shit!");
+	if(id2==0) { // child code
+		for(i=0; i < 100; i ++)
+			cprintf("I should run 2nd!\n");
+		return;
+	} else { //parent code
+		sys_set_prio(id,101);
+	
+	}
+	sys_env_set_status(id2,ENV_RUNNABLE);
+	sys_env_set_status(id,ENV_RUNNABLE);
+	sched_yield();
+	
+	// print a message and yield to the other a few times
+	
+}
+

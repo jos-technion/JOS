@@ -1,0 +1,26 @@
+CODING:  (add-hook 'c-mode-hook
+CODING:      (when (string-match "/lab/" buffer-file-name) (c-set-style "jos"))))
+env_tf.*:CODING:  (add-hook 'c-mode-hook
+env_tf.*:CODING:      (when (string-match "/lab/" buffer-file-name) (c-set-style "jos"))))
+env_tf.*:GNUmakefile:GCC_LIB := $(shell $(CC) $(CFLAGS) -print-libgcc-file-name)
+env_tf.*:GNUmakefile:grade: $(LABSETUP)grade-lab$(LAB).sh
+env_tf.*:GNUmakefile:	sh $(LABSETUP)grade-lab$(LAB).sh
+env_tf.*:grade-lab1.sh:. ./grade-functions.sh
+env_tf.*:grade-lab2.sh:. ./grade-functions.sh
+env_tf.*:grade-lab3.sh:. ./grade-functions.sh
+env_tf.*:grade-lab4.sh:. ./grade-functions.sh
+env_tf.*:grade-lab4.sh:	'Registers after page-fault OK' \
+env_tf.*:grade-lab4.sh:	! 'Registers after page-fault MISMATCH'
+GNUmakefile:GCC_LIB := $(shell $(CC) $(CFLAGS) -print-libgcc-file-name)
+GNUmakefile:grade: $(LABSETUP)grade-lab$(LAB).sh
+GNUmakefile:	sh $(LABSETUP)grade-lab$(LAB).sh
+grade-lab1.sh:. ./grade-functions.sh
+grade-lab2.sh:. ./grade-functions.sh
+grade-lab3.sh:. ./grade-functions.sh
+grade-lab4.sh:. ./grade-functions.sh
+grade-lab4.sh:	'Registers after page-fault OK' \
+grade-lab4.sh:	! 'Registers after page-fault MISMATCH'
+Binary file lab1-handin.tar.gz matches
+Binary file lab2-handin.tar.gz matches
+Binary file lab3-handin.tar.gz matches
+Binary file lab4-handin.tar.gz matches

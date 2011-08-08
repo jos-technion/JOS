@@ -1,0 +1,56 @@
+=== This template file contains questions you need to answer.
+=== Fill your answers on appropriate blank lines only.
+=== Don't start any line with three equal signs "===".
+=== Don't edit any lines starting from three equal signs.
+=== Use C notation to write numbers: 42 for decimal, 0x2a for hexadecimal.
+=== We may check most of the answers automatically, so "forty two" or
+=== "26+16" won't work for this example. Spaces are mostly ignored, so
+=== "  42  " is OK (without quotes of course). 
+=== When asked to specify address & instruction, do it in the form of
+=== gdb output "ADDRESS: INSTRUCTION", for example "0x7c26:  or  $0x1,%eax"
+=== Don't make lines longer than 80 characters. You don't need to fit your
+=== answer in a single line, you can start a new line at will.
+=== However, when asked to fill "a table" make each table raw a single line. 
+
+=== Q How did you structure your transmit implementation? In
+===   particular, what do you do if the transmit ring is full?
+===   (free form, no more than one paragraph)
+if the transmit ring is full, the e100 drive rreturns a
+E_NO_MEM error, and the output.c keeps spinning (looping)
+until the packet is sucessfully sent.
+
+=== Q How did you structure your receive implementation? In
+===   particular, what do you do if the receive ring is empty and a
+===   user environment requests the next incoming packet?
+===   (free form, no more than one paragraph)
+if the ring is empty and a user request a packet, first of all, I 
+resume the driver (RESUME the RU), and return a E_TRY_AGAINT error,
+the input.c will stays in a loop until it gets a packet.
+=== Q What does the web page served by JOS's web server say?
+===   (free form, cut & paste)
+RFB 003.008
+=== Q How many hours approximately did it take you to do this lab?
+===   (integer)
+50
+====================================================================
+=== Q What challenge(s) have you chosen to implement? (specify
+===   challenge numbers separated by spaces, if more than one)
+1
+=== Q If any of the challenges requires changing the kernel source,
+===   list the files which you have changed/added during
+===   implementation.
+===   (one file per line, relative to lab directory containing .git/)
+kern/e100.c
+kern/syscall.c
+lib/syscall.c
+inc/lib.h
+kern/syscall.h
+
+=== Q Describe your solution for every challenge.
+===   (free form, up to 500 words in total, don't need to use all 500!)
+Challenge 1:
+I've added a function to the e100 driver to read the mac address,
+it gets an array of uint8_t, which saves the mac address in it,
+also, added syscalls to this function. the jif.c calls this syscall and update
+it's mac address accordingly. I used the algorithm in 6.3.4.4 in the Driver Manual
+to read the mac address from the EEPROM.

@@ -1,0 +1,83 @@
+=== This template file contains questions you need to answer.
+=== Fill your answers on appropriate blank lines only.
+=== Don't start any line with three equal signs "===".
+=== Don't edit any lines starting from three equal signs.
+=== Use C notation to write numbers: 42 for decimal, 0x2a for hexadecimal.
+=== We may check most of the answers automatically, so "forty two" or
+=== "26+16" won't work for this example. Spaces are mostly ignored, so
+=== "  42  " is OK (without quotes of course). 
+=== When asked to specify address & instruction, do it in the form of
+=== gdb output "ADDRESS: INSTRUCTION", for example "0x7c26:  or  $0x1,%eax"
+=== Don't make lines longer than 80 characters. You don't need to fit your
+=== answer in a single line, you can start a new line at will.
+=== However, when asked to fill "a table" make each table raw a single line.
+
+=== Q How much disk space can be addressed by a single bitmap block
+===   when size of a block is 4Kb? (number in _bytes_)
+2097152
+=== Q How much disk space can be addressed by a single bitmap block
+===   when size of a block is 512B? (number in _bytes_)
+2097152
+=== Q What is a maximum supported file size in JOS FS? (number in _bytes_)
+4235264
+=== Q Suppose we add a new field in struct File:
+===      uint32_t f_dindirect; // double indirect block
+===   this field points to a block which contains an array of
+===   f_indirect pointers. You can take look at the illustration at
+===   http://en.wikipedia.org/wiki/File:Ext2-inode.gif
+===   What is a maximum supported file size now? (number in _bytes_)
+4299202560
+=== Q After giving IO priveledges to FS environment in env_alloc()
+===   which other functions/procedures are needed to be changed in
+===   order to ensure that these privileges are switched on/off when
+===   switching between environments?
+===   (just function names separated by spaces, not full declarations,
+===   if no other changes are needed write NONE)
+NONE
+=== Q Suppose we change the implementation of skip_slash function to:
+===     static const char* skip_slash(const char *p) {
+===       return p+1;
+===     }
+===   Now we run:
+===     char *path="/foo/bar/baz";
+===     walk_path(path,...)
+===   File /foo/bar/baz is a regular existing file on disk.
+===   What is a (necessary and sufficient) condition for path
+===   argument, so walk_path() would still work properly?
+===   (free form, up to 20 words)
+any path that doesn't include double slash concatendated (//) 
+=== Q If the condition you have stated in the previous answer does not
+===   met, what are all possible values returned by
+===   walk_path(path,...)? When possible, specify symbolic name; don't
+===   forget minus sign, e.g. -E_NO_MEM.
+===   (list of space separated values)
+0 -E_NOT_FOUND -E_BAD_PATH
+=== Q Why user space implementation of exec() is harder than the one
+===   of spawn()? (free form, up to 20 words)
+spawn creates a new child with a new stack and loads the binary file,
+however, exec changes the stack and trapframe (code segements.. etc),
+of the current environment, so in order to do that, you need to write code,
+which does that, however, you want to load a new code, so it's almost impossible
+to do it in user space (not impossible.. but very hard).
+====================================================================
+=== Q What challenge(s) have you chosen to implement? (specify
+===   challenge numbers separated by spaces, if more than one)
+2
+=== Q If the challenge requires changing the kernel source, list the
+===   files which you have changed/added during implementation.
+===   (one file per line, relative to lab directory containing .git/)
+fs/bc.c
+kern/syscall.c
+lib/syscall.c
+inc/lib.h
+inc/lib/syscall.h
+=== Q Describe you solution.
+===   (free form, up to 500 words, don't need to use all 500!)
+I defined two variables in fs/bc.c which indicates the maximum cache size,
+(number of blocks), and when this limit reach, number of blocks to be freed.
+so, what I did, when I have a page fault of reading a block, if the cache limit,
+isn't reached yet, do the normal allocation. 
+else,
+loop over the blocks, each block found, remove the access bit if present, if not, 
+(not accessed) evicted this block, till we reach the number of blocks that should
+be freed.
