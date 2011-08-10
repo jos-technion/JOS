@@ -77,6 +77,7 @@ env_init(void)
 	int i;
 	for(i=NENV-1;i >= 0; i--) {
 		envs[i].env_id = 0;
+		envs[i].user.is_initialized = -1;
 		envs[i].env_status = ENV_FREE;
 		LIST_INSERT_HEAD(&env_free_list, &envs[i], env_link);
 	}

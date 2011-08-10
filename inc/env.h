@@ -34,6 +34,15 @@ typedef int32_t envid_t;
 #define ENV_FREE		0
 #define ENV_RUNNABLE		1
 #define ENV_NOT_RUNNABLE	2
+#define MAX_USER_GROUPS		10
+#define MAX_USER_LENGTH		20
+
+//LAB7: #Majd
+struct User {
+	int is_initialized;
+	char user[MAX_USER_LENGTH];
+	int groups[MAX_USER_GROUPS];
+};
 
 struct Env {
 	struct Trapframe env_tf;	// Saved registers
@@ -56,6 +65,9 @@ struct Env {
 	uint32_t env_ipc_value;		// data value sent to us 
 	envid_t env_ipc_from;		// envid of the sender	
 	int env_ipc_perm;		// perm of page mapping received
+//LAB7: #Majd
+	struct User user;		// struct user which holds logged in user.
 };
 	
+
 #endif // !JOS_INC_ENV_H

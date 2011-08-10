@@ -2,7 +2,8 @@
 #include <inc/lib.h>
 #include <fs/fs.h>
 #define BUFSIZ 1024		/* Find the buffer overrun bug! */
-#define MAX_USER_LENGTH 255
+
+#define MAX_USER 255
 #define MAX_PASSWORD_LENGTH 100
 
 #define FVA ((struct Fd*)0xCCCCC000)
@@ -302,8 +303,8 @@ void
 login() 
 {
 	char *p_username;
-	char *p_password;
-	char username[MAX_USER_LENGTH];
+        char *p_password;
+	char username[MAX_USER];
 	struct File *f;
 login:
 	fprintf(1,"Enter your username: ");

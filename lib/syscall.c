@@ -149,3 +149,8 @@ int
 sys_get_mac_address(uint8_t *hwaddr) {
 	return syscall(SYS_get_mac_address, 1,(uint32_t)hwaddr , 0 ,0 ,0 ,0);
 }
+
+int
+sys_get_logged_user_name(void* va) {
+	return syscall(SYS_get_logged_user_name, 1,(uint32_t)va , 0 ,0 ,0 ,0);
+}

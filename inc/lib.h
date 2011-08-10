@@ -61,6 +61,7 @@ int	sys_clear_block_access_bit(envid_t envid, void *va);
 int 	sys_receive_packet(void* va);
 int	sys_send_packet(void* va, int size);
 int	sys_get_mac_address(uint8_t hwaddr[]);
+int	sys_get_logged_user_name(char *buf);
 // This must be inlined.  Exercise for reader: why?
 static __inline envid_t sys_exofork(void) __attribute__((always_inline));
 static __inline envid_t

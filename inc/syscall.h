@@ -24,6 +24,7 @@ enum
 	SYS_send_packet,
 	SYS_receive_packet,
 	SYS_get_mac_address,
+	SYS_get_logged_user_name,
 	NSYSCALLS
 };
 

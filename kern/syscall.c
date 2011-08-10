@@ -106,6 +106,12 @@ sys_exofork(void)
 	new_env->env_status = ENV_NOT_RUNNABLE;
 	new_env->env_tf = curenv->env_tf;
 	new_env->env_tf.tf_regs.reg_eax = 0;
+	new_env->user.is_initialized = curenv->user.is_initialized;
+	int i;
+	for(i = 0; i < MAX_USER_LENGTH; i++) 
+		new_env->user.user[i] = curenv->user.user[i];
+	for(i =0; i < MAX_USER_GROUPS; i++)
+		new_env->user.groups[i] = curenv->user.groups[i];
 	//cprintf("New child is born!: %08x\n",new_env->env_id);
 
 
@@ -507,6 +513,18 @@ int
 sys_get_mac_address(uint8_t hwaddr[]) {
 	return e100_get_mac_address(hwaddr);
 }
+int
+sys_get_logged_user_name(char* buf) {
+	int r;
+	if((r = user_mem_check(curenv, buf, MAX_USER_LENGTH, PTE_U|PTE_W)) <0) {
+		cprintf("SYS_get_logged_user_name: %08x\n",r);
+		return r;
+	}
+	if(curenv->user.is_initialized == 0)
+		return -1;
+	memmove(buf,curenv->user.user,MAX_USER_LENGTH);
+	return 0;
+}
 // Dispatches to the correct kernel function, passing the arguments.
 int32_t
 syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5)
@@ -556,6 +574,8 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 			return sys_receive_packet((void *)a1);
 		case SYS_get_mac_address:
 			return sys_get_mac_address((uint8_t *) a1);
+		case SYS_get_logged_user_name:
+			return sys_get_logged_user_name((char *)a1);
 		default:
 			return -E_INVAL;
 	}
