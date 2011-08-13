@@ -13,10 +13,11 @@
 #include <kern/monitor.h>
 #include <kern/sched.h>
 
+#include <kern/user.h>
+
 struct Env *envs = NULL;		// All environments
 struct Env *curenv = NULL;		// The current env
 static struct Env_list env_free_list;	// Free list
-
 #define ENVGENSHIFT	12		// >= LOGNENV
 
 //
@@ -77,10 +78,11 @@ env_init(void)
 	int i;
 	for(i=NENV-1;i >= 0; i--) {
 		envs[i].env_id = 0;
-		envs[i].user.is_initialized = -1;
+		envs[i].user = -1;
 		envs[i].env_status = ENV_FREE;
 		LIST_INSERT_HEAD(&env_free_list, &envs[i], env_link);
 	}
+	
 }
 
 //
@@ -204,7 +206,9 @@ env_alloc(struct Env **newenv_store, envid_t parent_id)
 
 	// Also clear the IPC receiving flag.
 	e->env_ipc_recving = 0;
-
+	
+	// Setup the current path to be /
+	e->user = -1;
 	// If this is the file server (e == &envs[1]) give it I/O privileges.
 	// LAB 5: Your code here.
 	if(e==&envs[1])

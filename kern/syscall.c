@@ -14,6 +14,7 @@
 #include <kern/time.h>
 #include <kern/e100.h>
 
+#include <kern/user.h>
 
 static int sys_clear_block_access_bit(envid_t envid, void *va) {
 	struct Env *env;
@@ -106,12 +107,8 @@ sys_exofork(void)
 	new_env->env_status = ENV_NOT_RUNNABLE;
 	new_env->env_tf = curenv->env_tf;
 	new_env->env_tf.tf_regs.reg_eax = 0;
-	new_env->user.is_initialized = curenv->user.is_initialized;
-	int i;
-	for(i = 0; i < MAX_USER_LENGTH; i++) 
-		new_env->user.user[i] = curenv->user.user[i];
-	for(i =0; i < MAX_USER_GROUPS; i++)
-		new_env->user.groups[i] = curenv->user.groups[i];
+	new_env->user= curenv->user;
+	
 	//cprintf("New child is born!: %08x\n",new_env->env_id);
 
 
@@ -516,15 +513,58 @@ sys_get_mac_address(uint8_t hwaddr[]) {
 int
 sys_get_logged_user_name(char* buf) {
 	int r;
+	if(curenv->user == -1)
+		return -1;
 	if((r = user_mem_check(curenv, buf, MAX_USER_LENGTH, PTE_U|PTE_W)) <0) {
 		cprintf("SYS_get_logged_user_name: %08x\n",r);
 		return r;
 	}
-	if(curenv->user.is_initialized == 0)
-		return -1;
-	memmove(buf,curenv->user.user,MAX_USER_LENGTH);
+	
+	memmove(buf,users[curenv->user].user,MAX_USER_LENGTH);
 	return 0;
 }
+
+int
+sys_get_current_path(char* buf) {
+	int r;
+	if(curenv->user == -1)
+		return -1;
+	if((r = user_mem_check(curenv, buf, MAX_PATH_LENGTH, PTE_U|PTE_W)) <0) {
+		cprintf("SYS_get_logged_user_name: %08x\n",r);
+		return r;
+	}
+	
+	memmove(buf,users[curenv->user].path,MAX_PATH_LENGTH);
+	return 0;
+}
+
+int
+sys_update_current_path(char* buf) {
+	int r;
+	if(curenv->user == -1)
+		return -1;
+	if((r = user_mem_check(curenv, buf, MAX_PATH_LENGTH, PTE_U)) <0) {
+		cprintf("SYS_get_logged_user_name: %08x\n",r);
+		return r;
+	}
+	
+	memmove(users[curenv->user].path,buf,MAX_PATH_LENGTH);
+	return 0;
+}
+
+int
+sys_get_home_dir(char* buf) {
+	int r;
+	if(curenv->user == -1)
+		return -1;
+	if((r = user_mem_check(curenv, buf, MAX_PATH_LENGTH, PTE_U|PTE_W)) <0) {
+		cprintf("SYS_get_logged_user_name: %08x\n",r);
+		return r;
+	}
+	memmove(buf,"/home/stam",11);
+	return 0;
+}
+
 // Dispatches to the correct kernel function, passing the arguments.
 int32_t
 syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5)
@@ -576,6 +616,12 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 			return sys_get_mac_address((uint8_t *) a1);
 		case SYS_get_logged_user_name:
 			return sys_get_logged_user_name((char *)a1);
+		case SYS_get_current_path:
+			return sys_get_current_path((char *)a1);
+		case SYS_update_current_path:
+			return sys_update_current_path((char *)a1);
+		case SYS_get_home_dir:
+			return sys_get_home_dir((char *)a1);
 		default:
 			return -E_INVAL;
 	}

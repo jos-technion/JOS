@@ -11,6 +11,7 @@
 #include <kern/env.h>
 #include <kern/sched.h>
 
+#include <kern/user.h>
 // These variables are set by i386_detect_memory()
 static physaddr_t maxpa;	// Maximum physical address
 size_t npage;			// Amount of physical memory (in pages)
@@ -196,6 +197,10 @@ i386_vm_init(void)
 	envs = boot_alloc(n,PGSIZE);	
 	if(envs==NULL) 
 		panic("FAILED TO ALLOCATE ENVS");
+	n = ROUNDUP(NUSERS*sizeof (struct User),PGSIZE);	
+	users = boot_alloc(n, PGSIZE);
+	if(users == NULL)
+		panic("FAILED TO ALLOCATE USERS");
 	//////////////////////////////////////////////////////////////////////
 	// Now that we've allocated the initial kernel data structures, we set
 	// up the list of free physical pages. Once we've done so, all further

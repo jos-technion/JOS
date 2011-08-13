@@ -14,6 +14,7 @@
 #include <kern/picirq.h>
 #include <kern/time.h>
 #include <kern/pci.h>
+#include <kern/user.h>
 
 
 void
@@ -39,6 +40,8 @@ i386_init(void)
 	// Lab 3 user environment initialization functions
 	env_init();
 	idt_init();
+	// Lab 7 user logins initialization function
+	user_init();
 
 	// Lab 4 multitasking initialization functions
 	pic_init();

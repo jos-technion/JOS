@@ -7,7 +7,7 @@
 
 OBJDIRS += kern
 
-KERN_LDFLAGS := $(LDFLAGS) -T kern/kernel.ld -nostdlib
+KERN_LDFLAGS := $(LDFLAGS) -T kern/kernel.ld  -nostdlib -lcrypt
 
 # entry.S must be first, so that it's the first code in the text segment!!!
 #
@@ -27,6 +27,7 @@ KERN_SRCFILES :=	kern/entry.S \
 			kern/sched.c \
 			kern/syscall.c \
 			kern/kdebug.c \
+			kern/user.c \
 			lib/printfmt.c \
 			lib/readline.c \
 			lib/string.c
@@ -34,7 +35,7 @@ KERN_SRCFILES :=	kern/entry.S \
 # Source files for LAB6
 KERN_SRCFILES +=	kern/e100.c \
 			kern/pci.c \
-			kern/time.c
+			kern/time.c 
 
 # Only build files if they exist.
 KERN_SRCFILES := $(wildcard $(KERN_SRCFILES))
@@ -54,6 +55,7 @@ KERN_BINFILES :=	user/icode \
 			user/testshell \
 			user/hello \
 			user/login \
+			user/cd \
 			fs/fs \
 			net/testoutput \
 			net/testinput \
